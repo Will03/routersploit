@@ -103,17 +103,54 @@ class BaseInterpreter(object):
 
         return command_handler
 
+    def loadAutoScript(self):
+        try:
+            payloadFile = open("AutomateScript.rc",'r')    #automate file
+        except:
+            print_status('Don\'t have AutomateScript.rc')
+        if payloadFile != 0:            
+            for mycommand in payloadFile.readlines():
+                mycommand = mycommand.strip()
+
+                print_status('%s'%(mycommand))
+                if not len(mycommand) or mycommand.startswith('#'):
+                    continue
+                try:
+                    command, args = self.parse_line(mycommand)
+                    if not command:
+                        continue
+                    command_handler = self.get_command_handler(command)
+                    command_handler(args)
+                except RoutersploitException as err:
+                    print_error(err)
+                except EOFError:
+                    print_info()
+                    print_status("routersploit stopped")
+                    break
+                except KeyboardInterrupt:
+                    print_info()
+                finally:
+                    printer_queue.join()
+
     def start(self):
         """ Routersploit main entry point. Starting interpreter loop. """
 
         print_info(self.banner)
         printer_queue.join()
+        payloadFile = 0
+
+        # add a function
+        # let me test iot automate
+        self.loadAutoScript()
         while True:
             try:
                 command, args = self.parse_line(input(self.prompt))
+                print_status('%s :: %s'%(command,args))
+                
                 if not command:
                     continue
                 command_handler = self.get_command_handler(command)
+
                 command_handler(args)
             except RoutersploitException as err:
                 print_error(err)
@@ -125,7 +162,7 @@ class BaseInterpreter(object):
                 print_info()
             finally:
                 printer_queue.join()
-
+    
     def complete(self, text, state):
         """Return the next possible completion for 'text'.
 
