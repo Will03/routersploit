@@ -104,11 +104,12 @@ class BaseInterpreter(object):
         return command_handler
 
     def loadAutoScript(self):
+        payloadFile = 'NotThing'
         try:
-            payloadFile = open("AutomateScript.rc",'r')    #automate file
+            payloadFile = open("autoTmpScript.rc",'r')    #automate file
         except:
-            print_status('Don\'t have AutomateScript.rc')
-        if payloadFile != 0:            
+            print_status('Don\'t have autoTmpScript.rc')
+        if payloadFile != 'NotThing':            
             for mycommand in payloadFile.readlines():
                 mycommand = mycommand.strip()
 
