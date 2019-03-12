@@ -2,5 +2,3 @@ use scanners/autopwn
 set target 192.168.0.1
 run
 exit
-exit
-exit
